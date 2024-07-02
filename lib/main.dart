@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'player_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -36,7 +37,34 @@ class MyHomePage extends StatelessWidget {
             HeaderSection(),
             PlayListSection(),
           ],
-        )));
+        )),
+        bottomNavigationBar: BottomSection());
+  }
+}
+
+class BottomSection extends StatelessWidget {
+  const BottomSection({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BottomNavigationBar(
+        backgroundColor: Colors.blue,
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
+        items: const [
+          BottomNavigationBarItem(
+              icon: Icon(Icons.pause, color: Colors.white), label: ''),
+          BottomNavigationBarItem(
+              icon: Text("Imagine . Ariana Grande",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w400)),
+              label: ''),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.arrow_circle_up, color: Colors.white),
+              label: ''),
+        ]);
   }
 }
 
@@ -64,8 +92,9 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 }
 
-void _playMusic() {
-  // Add your code to handle the play music action here.
+void playMusic(BuildContext context) {
+  Navigator.push(
+      context, MaterialPageRoute(builder: (context) => const MyPlayerPage()));
 }
 
 class HeaderSection extends StatelessWidget {
@@ -90,14 +119,14 @@ class HeaderSection extends StatelessWidget {
                       fontSize: 22,
                       fontWeight: FontWeight.w800)),
             ),
-            const Positioned(
+            Positioned(
               right: 0,
               bottom: 20,
               child: MaterialButton(
-                  onPressed: _playMusic,
+                  onPressed: () => playMusic(context),
                   color: Colors.blue,
-                  shape: CircleBorder(),
-                  child: Padding(
+                  shape: const CircleBorder(),
+                  child: const Padding(
                     padding: EdgeInsets.all(14),
                     child: Icon(Icons.play_arrow_rounded,
                         color: Colors.white, size: 30),
@@ -109,13 +138,68 @@ class HeaderSection extends StatelessWidget {
 }
 
 class PlayListSection extends StatelessWidget {
+  final List playList = const [
+    {'title': 'No tears left to cry', 'duration': '3.16', 'played': false},
+    {'title': 'Imagine', 'duration': '3.14', 'played': true},
+    {'title': 'Into you', 'duration': '3.13', 'played': false},
+    {'title': '34 35', 'duration': '3.26', 'played': false},
+    {'title': 'positions', 'duration': '2.58', 'played': false},
+  ];
   const PlayListSection({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
-      height: 500,
-    );
+        padding: const EdgeInsets.fromLTRB(30, 40, 20, 20),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Popular',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 25,
+                      fontWeight: FontWeight.w500,
+                    )),
+                Container(
+                    margin: const EdgeInsets.only(right: 10),
+                    child: const Text('Show All',
+                        style: TextStyle(fontSize: 13, color: Colors.blue)))
+              ],
+            ),
+            const SizedBox(height: 20),
+            Column(
+              children: playList.map((song) {
+                return SizedBox(
+                  height: 100,
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(song['title'],
+                            style: TextStyle(
+                                color:
+                                    song['played'] ? Colors.blue : Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400)),
+                        Row(children: [
+                          Text(song['duration'],
+                              style: TextStyle(
+                                  color: song['played']
+                                      ? Colors.blue
+                                      : Colors.black,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400)),
+                          Icon(
+                            Icons.more_vert,
+                            color: song['played'] ? Colors.blue : Colors.grey,
+                          )
+                        ])
+                      ]),
+                );
+              }).toList(),
+            )
+          ],
+        ));
   }
 }
